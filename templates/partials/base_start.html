@@ -1,4 +1,4 @@
-{{define "base"}}
+{{define "base_start"}}
 
 <!doctype html>
 <html>
@@ -7,15 +7,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.tailwindcss.com"></script>
-  <title>{{template "title" .}}</title>
+  <title>{{.title}}</title>
 </head>
 
 <body>
-  <div id="content">
-    {{.content}}
-  </div>
-</body>
-
-</html>
-
-{{end}}
+  <div class="flex flex-col min-h-screen" id="content">
+    {{end}}

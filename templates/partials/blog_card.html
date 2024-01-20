@@ -1,0 +1,11 @@
+{{define "blog_card"}}
+<div class="rounded-lg border bg-card text-card-foreground shadow-sm" data-v0-t="card">
+  <div class="flex flex-col space-y-1.5 p-6">
+    <h3 class="text-2xl font-semibold whitespace-nowrap leading-none tracking-tight">{{.Title}}</h3>
+  </div>
+  <div class="p-6"><img src="{{.Image}}" alt="{{.Title}}" class="w-full h-32 object-cover mb-4" width="200" height="200"
+      style="aspect-ratio: 200 / 200; object-fit: cover;">
+    <p class="text-gray-600">{{.Description}}</p>
+  </div>
+</div>
+{{end}}
