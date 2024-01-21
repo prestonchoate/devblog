@@ -1,4 +1,4 @@
-module github.com/prestonchoate/simpleHtmlTemplates
+module github.com/prestonchoate/devblog
 
 go 1.21.6
 
