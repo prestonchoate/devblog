@@ -1,0 +1,12 @@
+{{define "blog_post"}}
+{{template "base_start" .}}
+{{template "nav_bar" .}}
+<main class="flex-1">
+  <section class="bg-gray-200 text-center py-20">
+    <h2 class="text-4xl font-bold mb-4">{{.post.Title}}</h2>
+    <p class="text-xl mb-8">{{.post.Content}}</p>
+  </section>
+</main>
+{{template "footer" .}}
+{{template "base_end" .}}
+{{end}}
