@@ -1,0 +1,15 @@
+{{define "project"}}
+{{template "base_start" .}}
+{{template "nav_bar" .}}
+<main class="flex-1">
+  <section class="bg-gray-200 text-center py-20">
+    <h2 class="text-4xl font-bold mb-4">{{.project.Title}}</h2>
+    <p class="text-xl mb-8">{{.project.Description}}</p>
+    <a href="{{.project.Link}}" target="_blank"
+      class="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-primary/90 h-10 px-4 py-2 bg-blue-500 text-white rounded">View
+      Project</a>
+  </section>
+</main>
+{{template "footer" .}}
+{{template "base_end" .}}
+{{end}}

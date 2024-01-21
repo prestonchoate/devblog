@@ -1,11 +1,11 @@
-{{define "blog_listing"}}
+{{define "project_listing"}}
 {{template "base_start" .}}
 {{template "nav_bar" .}}
 <main class="flex-1">
   <section class="bg-gray-200 text-center py-20">
-    <h2 class="text-4xl font-bold mb-4">All Blog Posts</h2>
+    <h2 class="text-4xl font-bold mb-4">All Projects</h2>
   </section>
-  {{template "posts_collection" .}}
+  {{template "projects_collection" .}}
 </main>
 {{template "footer" .}}
 {{template "base_end" .}}

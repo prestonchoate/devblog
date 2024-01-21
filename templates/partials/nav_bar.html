@@ -1,13 +1,12 @@
 {{define "nav_bar"}}
 <header class="flex items-center justify-between p-6 bg-gray-800 text-white">
   <div>
-    <h1 class="text-2xl font-bold">Developer's Portfolio</h1>
+    <h1 class="text-2xl font-bold">Preston Choate</h1>
   </div>
   <nav class="space-x-4">
-    <a class="hover:underline" href="#" rel="ugc">Home</a>
-    <a class="hover:underline" href="#" rel="ugc">Blog</a>
-    <a class="hover:underline" href="#" rel="ugc">Projects</a>
-    <a class="hover:underline" href="#" rel="ugc">About</a>
+    {{ range .links }}
+    <a class="hover:underline" href="{{.URL}}" rel="ugc">{{.Title}}</a>
+    {{ end }}
   </nav>
 </header>
 {{end}}
