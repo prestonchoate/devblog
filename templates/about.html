@@ -1,0 +1,29 @@
+{{ define "about_page" }}
+{{ template "base_start" . }}
+{{ template "nav_bar" . }}
+<main class="flex-1">
+  <section class="py-12 px-4">
+    <h2 class="text-2xl font-bold text-center mb-8">About Me</h2>
+    <div class="max-w-3xl mx-auto text-center">
+      <img src="/public/placeholder.svg" alt="Profile" class="w-48 h-48 mx-auto rounded-full mb-8" width="200"
+        height="200" style="aspect-ratio: 200 / 200; object-fit: cover;" />
+      <p class="text-gray-600 mb-6">
+        Hello! I'm a software developer with a passion for solving complex problems and building innovative
+        solutions. I have experience in a variety of technologies and I'm always eager to learn more.
+      </p>
+      <p class="text-gray-600 mb-6">
+        In my free time, I enjoy contributing to open-source projects and exploring the latest trends in the tech
+        industry. I believe in the power of community and collaboration, and I strive to make a positive impact in
+        the tech community.
+      </p>
+      <p class="text-gray-600">
+        Feel free to explore my blog and projects to learn more about my work. If you have any questions or would
+        like to collaborate, don't hesitate to reach out!
+      </p>
+    </div>
+  </section>
+</main>
+
+{{ template "footer" . }}
+{{ template "base_end" . }}
+{{end}}

@@ -188,6 +188,18 @@ func projectHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func aboutHandler(w http.ResponseWriter, r *http.Request) {
+	data := map[string]interface{}{
+		"title": "About",
+		"links": links,
+	}
+	err := templates.ExecuteTemplate(w, "about_page", data)
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+}
+
 func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
@@ -199,6 +211,7 @@ func main() {
 	fs := http.FileServer(http.Dir("./public/"))
 	r.Mount("/public/", http.StripPrefix("/public/", fs))
 	r.Get("/", homeHandler)
+	r.Get("/about", aboutHandler)
 
 	r.Route("/blog", func(r chi.Router) {
 		r.Get("/", listPosts)
