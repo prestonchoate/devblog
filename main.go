@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi/middleware"
@@ -20,8 +21,10 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.Timeout(60 * time.Second))
 
-	fs := http.FileServer(http.Dir("./public/"))
-	r.Mount("/public/", http.StripPrefix("/public/", fs))
+	fileSystem := handlers.FileSystem{Fs: http.Dir("./public/")}
+	fs := http.FileServer(fileSystem)
+	r.Mount("/public/", http.StripPrefix(strings.TrimRight("/public", "/"), fs))
+
 	r.Get("/", handlers.HomeHandler)
 	r.Get("/about", handlers.AboutHandler)
 

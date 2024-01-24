@@ -3,10 +3,34 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"strings"
 
 	"github.com/prestonchoate/devblog/config"
 	"github.com/prestonchoate/devblog/data"
 )
+
+// FileSystem custom file system handler
+type FileSystem struct {
+	Fs http.FileSystem
+}
+
+// Open opens file
+func (fs FileSystem) Open(path string) (http.File, error) {
+	f, err := fs.Fs.Open(path)
+	if err != nil {
+		return nil, err
+	}
+
+	s, err := f.Stat()
+	if s.IsDir() {
+		index := strings.TrimSuffix(path, "/") + "/index.html"
+		if _, err := fs.Fs.Open(index); err != nil {
+			return nil, err
+		}
+	}
+
+	return f, nil
+}
 
 func AboutHandler(w http.ResponseWriter, r *http.Request) {
 	config := config.GetInstance()
