@@ -1,5 +1,7 @@
 package data
 
+import "errors"
+
 var projectRepositoryInstance *ProjectRepository
 
 type Project struct {
@@ -11,36 +13,38 @@ type Project struct {
 }
 
 type ProjectRepository struct {
-	projects []*Project
+	projects  []*Project
+	persister Persister[Project]
 }
 
-func GetProjectRepositoryInstance() *ProjectRepository {
+func GetProjectRepositoryInstance() (*ProjectRepository, error) {
 	if projectRepositoryInstance == nil {
-		projectRepositoryInstance = &ProjectRepository{
-			projects: []*Project{
-				{Id: 1, Title: "Project 1", Image: "/public/placeholder.svg", Description: "Description 1", Link: "https://github.com/prestonchoate"},
-				{Id: 2, Title: "Project 2", Image: "/public/placeholder.svg", Description: "Description 2", Link: "https://github.com/prestonchoate"},
-				{Id: 3, Title: "Project 3", Image: "/public/placeholder.svg", Description: "Description 3", Link: "https://github.com/prestonchoate"},
-				{Id: 4, Title: "Project 4", Image: "/public/placeholder.svg", Description: "Description 4", Link: "https://github.com/prestonchoate"},
-				{Id: 5, Title: "Project 5", Image: "/public/placeholder.svg", Description: "Description 5", Link: "https://github.com/prestonchoate"},
-			},
+		// p, err := NewMemoryProjectPersister()
+		p, err := NewDBProjectPersister("projects", "id")
+		if err != nil {
+			return nil, errors.New("failed to create project repository")
 		}
+		projectRepositoryInstance = &ProjectRepository{}
+		projectRepositoryInstance.persister = p
 	}
-	return projectRepositoryInstance
+	return projectRepositoryInstance, nil
 }
 
 func (pr *ProjectRepository) GetProjects(limit int) []*Project {
-	if limit <= 0 {
-		return pr.projects
+	projects, err := pr.persister.LoadAll()
+	if err != nil {
+		return nil
 	}
-	return pr.projects[:limit]
+	if limit <= 0 || limit >= len(projects) {
+		return projects
+	}
+	return projects[:limit]
 }
 
 func (pr *ProjectRepository) GetProject(id int) *Project {
-	for _, project := range pr.projects {
-		if project.Id == id {
-			return project
-		}
+	project, err := pr.persister.Load(id)
+	if err != nil {
+		return nil
 	}
-	return nil
+	return project
 }

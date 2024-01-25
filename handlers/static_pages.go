@@ -53,7 +53,12 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
 	}
-	projectRepo := data.GetProjectRepositoryInstance()
+	projectRepo, err := data.GetProjectRepositoryInstance()
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
+
 	// only send the first 3 posts and projects to the home page
 	data := map[string]interface{}{
 		"title":      "Home",

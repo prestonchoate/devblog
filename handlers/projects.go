@@ -13,13 +13,16 @@ import (
 
 func HandleProjectListing(w http.ResponseWriter, r *http.Request) {
 	c := config.GetInstance()
-	projectRepo := data.GetProjectRepositoryInstance()
+	projectRepo, err := data.GetProjectRepositoryInstance()
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
 	data := map[string]interface{}{
 		"title":    "Projects",
 		"projects": projectRepo.GetProjects(0),
 		"links":    c.GetLinks(),
 	}
-	err := c.GetTemplates().ExecuteTemplate(w, "project_listing", data)
+	err = c.GetTemplates().ExecuteTemplate(w, "project_listing", data)
 	if err != nil {
 		log.Println(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -51,10 +54,15 @@ func ProjectCtx(next http.Handler) http.Handler {
 		projectIdParam := chi.URLParam(r, "projectId")
 		projectId, err := strconv.Atoi(projectIdParam)
 		if err != nil {
-			http.Error(w, http.StatusText(404), 404)
+			http.Error(w, http.StatusText(404), http.StatusNotFound)
 			return
 		}
-		project := data.GetProjectRepositoryInstance().GetProject(projectId)
+		pr, err := data.GetProjectRepositoryInstance()
+		if err != nil {
+			http.Error(w, http.StatusText(404), http.StatusNotFound)
+		}
+
+		project := pr.GetProject(projectId)
 		if project == nil {
 			http.Error(w, http.StatusText(404), 404)
 			return

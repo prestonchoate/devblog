@@ -214,6 +214,7 @@ func (d *dbPostPersister) LoadAll() ([]*Post, error) {
 	return parsedResults, nil
 }
 
+// TODO: Make this match what we're doing in the project persister
 func (d *dbPostPersister) parseResults(results *sql.Rows) []*Post {
 	posts := []*Post{}
 	for results.Next() {
