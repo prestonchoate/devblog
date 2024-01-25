@@ -1,5 +1,7 @@
 package data
 
+import "errors"
+
 var postRepositoryInstance *PostRepository
 
 type Post struct {
@@ -8,43 +10,44 @@ type Post struct {
 	Image       string
 	Content     string
 	Description string
+	Featured    bool
+	CreatedAt   string
 }
 
-// TODO: replace posts in this with DB calls
 type PostRepository struct {
-	posts []*Post
+	persister Persister[Post]
 }
 
-func GetPostRepositoryInstance() *PostRepository {
+func GetPostRepositoryInstance() (*PostRepository, error) {
 	if postRepositoryInstance == nil {
+		p, err := NewDBPostPersister("posts", "id")
+		if err != nil {
+			return nil, errors.New("failed to create post repository")
+		}
 		postRepositoryInstance = &PostRepository{
-			posts: []*Post{
-				{Id: 1, Title: "Post 1", Image: "/public/placeholder.svg", Content: "Content 1", Description: "Description 1"},
-				{Id: 2, Title: "Post 2", Image: "/public/placeholder.svg", Content: "Content 2", Description: "Description 2"},
-				{Id: 3, Title: "Post 3", Image: "/public/placeholder.svg", Content: "Content 3", Description: "Description 3"},
-				{Id: 4, Title: "Post 4", Image: "/public/placeholder.svg", Content: "Content 4", Description: "Description 4"},
-				{Id: 5, Title: "Post 5", Image: "/public/placeholder.svg", Content: "Content 5", Description: "Description 5"},
-				{Id: 6, Title: "Post 6", Image: "/public/placeholder.svg", Content: "Content 6", Description: "Description 6"},
-				{Id: 7, Title: "Post 7", Image: "/public/placeholder.svg", Content: "Content 7", Description: "Description 7"},
-			},
+			persister: p,
 		}
 	}
-	return postRepositoryInstance
+	return postRepositoryInstance, nil
 }
 
+// TODO: Change this to add a limit to the persister instead of doing it here
 func (pr *PostRepository) GetPosts(limit int) []*Post {
-	if limit <= 0 {
-		return pr.posts
+	p, err := pr.persister.LoadAll()
+	if err != nil {
+		return nil
 	}
-
-	return pr.posts[:limit]
+	if limit <= 0 || limit >= len(p) {
+		return p
+	}
+	return p[:limit]
 }
 
 func (pr *PostRepository) GetPost(id int) *Post {
-	for _, post := range pr.posts {
-		if post.Id == id {
-			return post
-		}
+	p, err := pr.persister.Load(id)
+	if err != nil {
+		return nil
 	}
-	return nil
+	return p
+
 }

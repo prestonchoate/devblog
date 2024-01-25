@@ -13,14 +13,18 @@ import (
 
 func HandlePostListing(w http.ResponseWriter, r *http.Request) {
 	c := config.GetInstance()
-	postRepo := data.GetPostRepositoryInstance()
+	postRepo, err := data.GetPostRepositoryInstance()
+	if err != nil {
+		log.Println(err.Error())
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+	}
 	data := map[string]interface{}{
 		"title":    "Blog",
 		"posts":    postRepo.GetPosts(0),
 		"links":    c.GetLinks(),
 		"showPost": true,
 	}
-	err := c.GetTemplates().ExecuteTemplate(w, "blog_listing", data)
+	err = c.GetTemplates().ExecuteTemplate(w, "blog_listing", data)
 	if err != nil {
 		log.Println(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -42,7 +46,12 @@ func PostCtx(next http.Handler) http.Handler {
 			http.Error(w, http.StatusText(404), 404)
 			return
 		}
-		postRepo := data.GetPostRepositoryInstance()
+		postRepo, err := data.GetPostRepositoryInstance()
+		if err != nil {
+			log.Println(err.Error())
+			http.Error(w, http.StatusText(404), 404)
+			return
+		}
 		post := postRepo.GetPost(postId)
 		if post == nil {
 			log.Println("Post not found")
