@@ -19,7 +19,6 @@ type ProjectRepository struct {
 
 func GetProjectRepositoryInstance() (*ProjectRepository, error) {
 	if projectRepositoryInstance == nil {
-		// p, err := NewMemoryProjectPersister()
 		p, err := NewDBProjectPersister("projects", "id")
 		if err != nil {
 			return nil, errors.New("failed to create project repository")

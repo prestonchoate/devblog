@@ -52,6 +52,11 @@ func (m *memoryProjectPersister) SaveMany(projects []*Project) error {
 	return nil
 }
 
+func (m *memoryProjectPersister) FilterBy(field string, val any) ([]*Project, error) {
+	log.Println("Filtering not yet implemented")
+	return nil, errors.New("filtering not yet implemented")
+}
+
 func (m *memoryProjectPersister) tableName() string {
 	return "projects"
 }
@@ -134,6 +139,11 @@ func (m *dbProjectPersister) tableName() string {
 
 func (m *dbProjectPersister) primaryKey() string {
 	return m.keyName
+}
+
+func (m *dbProjectPersister) FilterBy(field string, val any) ([]*Project, error) {
+	log.Println("Filtering not yet implemented")
+	return nil, errors.New("Filtering not yet implemented")
 }
 
 func (m *dbProjectPersister) setup() error {

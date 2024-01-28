@@ -2,6 +2,7 @@ package data
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 	"math/rand"
@@ -55,6 +56,11 @@ func (m *memoryPostPersister) Save(post *Post) error {
 
 func (m *memoryPostPersister) SaveMany(posts []*Post) error {
 	m.posts = append(m.posts, posts...)
+	return nil
+}
+
+func (m *memoryPostPersister) FilterBy(field string, val any) []*Post {
+	log.Println("Filtering not yet implemented")
 	return nil
 }
 
@@ -212,6 +218,11 @@ func (d *dbPostPersister) LoadAll() ([]*Post, error) {
 	}
 
 	return parsedResults, nil
+}
+
+func (d *dbPostPersister) FilterBy(field string, val any) ([]*Post, error) {
+	log.Println("Filtering not yet implemented")
+	return nil, errors.New("Filtering not yet implemented")
 }
 
 // TODO: Make this match what we're doing in the project persister

@@ -1,0 +1,41 @@
+{{ define "admin_login" }}
+{{ template "base_start" . }}
+{{ template "nav_bar" . }}
+
+<div class="flex-1 w-full max-w-md mx-auto my-10 space-y-6">
+  <div class="space-y-2 text-center">
+    <h1 class="text-3xl font-bold">Login</h1>
+    <p class="text-gray-500 dark:text-gray-400">Enter your username or email below to login to your account</p>
+  </div>
+  <form action="/api/login" method="post">
+    <div class="space-y-4">
+      <div class="space-y-2">
+        <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          for="username">
+          Username
+        </label>
+        <input
+          class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          id="username" name="username" placeholder="Username" required="" />
+      </div>
+      <div class="space-y-2">
+        <label class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          for="password">
+          Password
+        </label>
+        <input
+          class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+          id="password" name="password" required="" type="password" />
+      </div>
+      <button
+        class="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-800 text-white hover:bg-gray-900 h-10 px-4 py-2 w-full"
+        type="submit">
+        Login
+      </button>
+    </div>
+  </form>
+</div>
+
+{{ template "footer" . }}
+{{ template "base_end" . }}
+{{end}}
