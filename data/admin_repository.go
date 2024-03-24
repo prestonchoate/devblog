@@ -39,6 +39,9 @@ func (ur *UserRepository) GetUserByUsername(username string) *User {
 	if err != nil {
 		return nil
 	}
+	if len(u) == 0 {
+		return nil
+	}
 	// For now just return the first user found. There should really never be more than one
 	return u[0]
 }

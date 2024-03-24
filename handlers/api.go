@@ -1,9 +1,9 @@
 package handlers
 
 import (
+	"encoding/json"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/go-chi/render"
 	"github.com/prestonchoate/devblog/data"
@@ -26,7 +26,6 @@ func HandleApiLogin(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Printf("Error binding login request: \n%v\n", err.Error())
 		http.Error(w, "Bad Request", http.StatusBadRequest)
-		return
 	}
 
 	ur, err := data.GetUserRepositoryInstance()
@@ -51,15 +50,16 @@ func HandleApiLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("Login successful. Creating session cookie")
-	cookie := http.Cookie{
-		Name:     "session",
-		Value:    "1234",
-		Expires:  time.Now().Add(1 * time.Hour),
-		Secure:   true,
-		HttpOnly: true,
-		Path:     "/",
+	returnData := map[string]int{
+		"session": 1234,
 	}
-	http.SetCookie(w, &cookie)
-	http.Redirect(w, r, "/dashboard/admin", http.StatusSeeOther)
+	jsonData, err := json.Marshal(returnData)
+	if err != nil {
+		http.Error(w, "Server Error", http.StatusBadGateway)
+		return
+	}	
 
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonData)
 }

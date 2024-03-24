@@ -111,7 +111,8 @@ func (d *dbUserPersister) LoadAll() ([]*User, error) {
 }
 
 func (d *dbUserPersister) FilterBy(field string, val any) ([]*User, error) {
-	query := fmt.Sprintf(`SELECT * From %s WHERE %s = %s`, d.tableName(), field, val)
+	query := fmt.Sprintf(`SELECT * From %s WHERE %s = '%s'`, d.tableName(), field, val)
+	log.Println("Query: ", query)
 	results, err := d.dbConn.Query(query)
 	if err != nil {
 		log.Println(err)
