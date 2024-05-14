@@ -28,6 +28,7 @@ type Config struct {
 	templates     *template.Template
 	links         []Link
 	dbConfig      databaseConfig
+	cmsClient     HygraphClient
 }
 
 func GetInstance() *Config {
@@ -59,6 +60,7 @@ func GetInstance() *Config {
 			},
 			templates: template.New(""),
 			dbConfig:  dbConfig,
+			cmsClient: *CreateHygraphClient(getEnv("HYGRAPH_ENDPOINT", "")),
 		}
 		configInstance.loadTemplates()
 	}
@@ -95,4 +97,8 @@ func (c *Config) GetLinks() []Link {
 
 func (c *Config) GetDBConfig() databaseConfig {
 	return c.dbConfig
+}
+
+func (c *Config) GetCmsClient() HygraphClient {
+	return c.cmsClient
 }

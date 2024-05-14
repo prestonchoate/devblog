@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"encoding/json"
 	"log"
 	"net/http"
 	"strings"
@@ -59,19 +59,16 @@ func main() {
 	})
 
 	r.Get("/test", func(w http.ResponseWriter, r *http.Request) {
-		ur, error := data.GetUserRepositoryInstance()
-		if error != nil {
-			log.Println(error.Error())
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		posts := data.GetCmsPosts()
+		data, err := json.Marshal(posts)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
 		}
-		user := ur.GetUserByUsername("test")
-		if user == nil {
-			log.Println("User not found")
-			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-		}
-
-		fmt.Fprintf(w, "User: %+v\n", user)
-
+		w.Header().Set("content-type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		w.Write(data)
+		
 	})
 
 	log.Fatal(http.ListenAndServeTLS(":8080", "server.crt", "server.key", r))
