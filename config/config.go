@@ -58,7 +58,11 @@ func GetInstance() *Config {
 				{Title: "Projects", URL: "/projects"},
 				{Title: "About", URL: "/about"},
 			},
-			templates: template.New(""),
+			templates: template.New("").Funcs(template.FuncMap{
+				"htmlSafe": func(html string) template.HTML {
+					return template.HTML(html)
+				},
+			}),
 			dbConfig:  dbConfig,
 			cmsClient: *CreateHygraphClient(getEnv("HYGRAPH_ENDPOINT", "")),
 		}

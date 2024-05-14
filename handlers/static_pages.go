@@ -48,26 +48,16 @@ func AboutHandler(w http.ResponseWriter, r *http.Request) {
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	config := config.GetInstance()
-	postRepo, err := data.GetPostRepositoryInstance()
-	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	}
-	projectRepo, err := data.GetProjectRepositoryInstance()
-	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	}
 
 	// only send the first 3 posts and projects to the home page
 	data := map[string]interface{}{
 		"title":      "Home",
-		"posts":      postRepo.GetPosts(3),
-		"projects":   projectRepo.GetProjects(3),
+		"posts":      data.GetCmsPosts(),
+		"projects":   make([]data.Project, 0, 0),
 		"links":      config.GetLinks(),
 		"showHeader": true,
 	}
-	err = config.GetTemplates().ExecuteTemplate(w, "home_page", data)
+	err := config.GetTemplates().ExecuteTemplate(w, "home_page", data)
 	if err != nil {
 		log.Println(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)

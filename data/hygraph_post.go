@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/prestonchoate/devblog/config"
 )
@@ -16,6 +17,8 @@ type CmsPost struct {
 	Featured    bool   `json:"isFeatured"`
 	Slug        string `json:"slug"`
 	Image       string `json:"image"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 type hygraphPostsResponse struct {
@@ -32,11 +35,14 @@ type hygraphPostsResponse struct {
 			Image    struct {
 				Url string `json:"url"`
 			} `json:"image"`
+			CreatedAt time.Time `json:"createdAt"`
+			UpdatedAt time.Time `json:"updatedAt"`
 		} `json:"posts"`
 	} `json:"data"`
 }
 
 func GetCmsPosts() []*CmsPost {
+	//TODO: Utilize ValKey here to cache the posts instead of calling the API every time
 	posts := make([]*CmsPost, 0, 40)
 	lastId := ""
 
@@ -56,6 +62,8 @@ func GetCmsPosts() []*CmsPost {
 					Featured:    postResponse.Featured,
 					Slug:        postResponse.Slug,
 					Image:       postResponse.Image.Url,
+					CreatedAt: postResponse.CreatedAt,
+					UpdatedAt: postResponse.UpdatedAt,
 				})
 			}
 			lastId = posts[len(posts)-1].ID
@@ -64,6 +72,52 @@ func GetCmsPosts() []*CmsPost {
 	}
 
 	return posts
+}
+
+func GetCmsPostBySlug(slug string) *CmsPost {
+	req := fmt.Sprintf(`
+			query {
+				posts (where: {slug: "%v"}) {
+					id
+					title
+					description
+					content {
+						html
+					}
+					isFeatured
+					slug
+					image {
+						url
+					}
+					createdAt
+					updatedAt
+				}
+			}
+	`, slug)
+	client := config.GetInstance().GetCmsClient()
+	data := client.SendRequest(req)
+	response := &hygraphPostsResponse{}
+	err := json.Unmarshal(data, &response)
+	if err != nil {
+		log.Fatal(err.Error())
+		return nil
+	}
+	if len(response.Data.Posts) <= 0 {
+		log.Println("No post found for Slug: ", slug)
+		return nil
+	}
+	post := response.Data.Posts[0]
+	return &CmsPost{
+		ID: post.ID,
+		Title: post.Title,
+		Description: post.Description,
+		Content: post.Content.Html,
+		Featured: post.Featured,
+		Slug: post.Slug,
+		Image: post.Image.Url,
+		CreatedAt: post.CreatedAt,
+		UpdatedAt: post.UpdatedAt,
+	}
 }
 
 func getNextPostsPage(lastId string, client *config.HygraphClient) *hygraphPostsResponse {
@@ -80,6 +134,8 @@ func getNextPostsPage(lastId string, client *config.HygraphClient) *hygraphPosts
 				image {
 					url
 				}
+				createdAt
+				updatedAt
 			}
 		}`, getPaginationField(lastId))
 

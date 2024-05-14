@@ -4,7 +4,6 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/prestonchoate/devblog/config"
@@ -13,18 +12,13 @@ import (
 
 func HandlePostListing(w http.ResponseWriter, r *http.Request) {
 	c := config.GetInstance()
-	postRepo, err := data.GetPostRepositoryInstance()
-	if err != nil {
-		log.Println(err.Error())
-		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
-	}
 	data := map[string]interface{}{
 		"title":    "Blog",
-		"posts":    postRepo.GetPosts(0),
+		"posts":    data.GetCmsPosts(),
 		"links":    c.GetLinks(),
 		"showPost": true,
 	}
-	err = c.GetTemplates().ExecuteTemplate(w, "blog_listing", data)
+	err := c.GetTemplates().ExecuteTemplate(w, "blog_listing", data)
 	if err != nil {
 		log.Println(err.Error())
 		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
@@ -33,26 +27,13 @@ func HandlePostListing(w http.ResponseWriter, r *http.Request) {
 
 func PostCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		postIdParam := chi.URLParam(r, "postId")
-		if postIdParam == "" {
-			log.Println("Post ID not found")
+		slugParam := chi.URLParam(r, "slug")
+		if slugParam == "" {
+			log.Println("Slug not found")
 			http.Error(w, http.StatusText(404), 404)
 			return
 		}
-
-		postId, err := strconv.Atoi(postIdParam)
-		if err != nil {
-			log.Println(err.Error())
-			http.Error(w, http.StatusText(404), 404)
-			return
-		}
-		postRepo, err := data.GetPostRepositoryInstance()
-		if err != nil {
-			log.Println(err.Error())
-			http.Error(w, http.StatusText(404), 404)
-			return
-		}
-		post := postRepo.GetPost(postId)
+		post := data.GetCmsPostBySlug(slugParam)
 		if post == nil {
 			log.Println("Post not found")
 			http.Error(w, http.StatusText(404), 404)
@@ -64,7 +45,7 @@ func PostCtx(next http.Handler) http.Handler {
 }
 
 func HandlePostView(w http.ResponseWriter, r *http.Request) {
-	post := r.Context().Value("blog_post").(*data.Post)
+	post := r.Context().Value("blog_post").(*data.CmsPost)
 	if post == nil {
 		http.Error(w, http.StatusText(404), 404)
 		return

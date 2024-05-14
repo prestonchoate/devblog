@@ -32,7 +32,7 @@ func main() {
 
 	r.Route("/blog", func(r chi.Router) {
 		r.Get("/", handlers.HandlePostListing)
-		r.Route("/{postId}", func(r chi.Router) {
+		r.Route("/{slug}", func(r chi.Router) {
 			r.Use(handlers.PostCtx)
 			r.Get("/", handlers.HandlePostView)
 		})
@@ -68,7 +68,7 @@ func main() {
 		w.Header().Set("content-type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		w.Write(data)
-		
+
 	})
 
 	log.Fatal(http.ListenAndServeTLS(":8080", "server.crt", "server.key", r))
